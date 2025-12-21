@@ -10,3 +10,11 @@ export interface ChatMessage {
   text: string;
   type?: 'hint' | 'correct' | 'incorrect' | 'summary';
 }
+
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  hint: string;
+  explanation: string;
+}

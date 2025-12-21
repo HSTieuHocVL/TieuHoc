@@ -2,16 +2,25 @@
 import React from 'react';
 import { StatusCorrectIcon } from '../icons/StatusCorrectIcon';
 import { StatusIncorrectIcon } from '../icons/StatusIncorrectIcon';
+import { TimerIcon } from '../icons/TimerIcon';
 
 interface QuizStatusProps {
   current: number;
   total: number;
   correct: number;
   incorrect: number;
+  timeLeft: number;
 }
 
-export const QuizStatus: React.FC<QuizStatusProps> = ({ current, total, correct, incorrect }) => {
-  const progressPercentage = (current / total) * 100;
+export const QuizStatus: React.FC<QuizStatusProps> = ({ current, total, correct, incorrect, timeLeft }) => {
+  const progressPercentage = total > 0 ? (current / total) * 100 : 0;
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
 
   return (
     <div className="space-y-3 p-3 bg-blue-50 dark:bg-gray-700 rounded-lg">
@@ -25,12 +34,19 @@ export const QuizStatus: React.FC<QuizStatusProps> = ({ current, total, correct,
           style={{ width: `${progressPercentage}%` }}>
         </div>
       </div>
-      <div className="flex justify-around text-center">
+      <div className="flex justify-around items-center text-center">
         <div className="flex items-center gap-2">
             <StatusCorrectIcon />
             <div>
                 <div className="font-bold text-lg text-green-600 dark:text-green-400">{correct}</div>
                 <div className="text-xs text-gray-600 dark:text-gray-300">Đúng</div>
+            </div>
+        </div>
+         <div className="flex items-center gap-2">
+            <TimerIcon />
+            <div>
+                <div className="font-bold text-lg text-blue-600 dark:text-blue-400">{formatTime(timeLeft)}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-300">Thời gian</div>
             </div>
         </div>
         <div className="flex items-center gap-2">
