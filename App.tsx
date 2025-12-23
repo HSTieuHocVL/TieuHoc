@@ -1,40 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MathAssistant } from './MathAssistant';
 import { QAGemini } from './QAGemini';
-import { ApiKeyManager } from './components/ApiKeyManager';
-import { initializeAi } from './services/geminiService';
 
 const App: React.FC = () => {
   const [activeApp, setActiveApp] = useState<'math' | 'qa'>('math');
-  const [apiKey, setApiKey] = useState<string | null>(() => {
-    // Check session storage for a previously entered key
-    return sessionStorage.getItem('gemini-api-key') || process.env.API_KEY || null;
-  });
-
-  useEffect(() => {
-    if (apiKey) {
-      try {
-        initializeAi(apiKey);
-        // Persist the key in session storage
-        sessionStorage.setItem('gemini-api-key', apiKey);
-      } catch (error) {
-        console.error("Failed to initialize Gemini AI:", error);
-        // If initialization fails, clear the bad key and prompt again
-        sessionStorage.removeItem('gemini-api-key');
-        setApiKey(null);
-        alert('Failed to initialize with the provided API Key. Please check the key and try again.');
-      }
-    }
-  }, [apiKey]);
-
-  const handleKeySubmit = (key: string) => {
-    setApiKey(key);
-  };
-
-  if (!apiKey) {
-    return <ApiKeyManager onKeySubmit={handleKeySubmit} />;
-  }
 
   const getButtonClasses = (app: 'math' | 'qa') => {
     return `px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
