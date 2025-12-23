@@ -22,7 +22,7 @@ export const askGemini = async (prompt: string): Promise<string> => {
   try {
     const client = getAiClient();
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-2.5-flash',
       contents: prompt,
     });
 
@@ -57,7 +57,7 @@ Mỗi câu hỏi phải có:
 Vui lòng trả lời dưới dạng một mảng JSON tuân thủ theo schema đã cung cấp.`;
 
         const response = await client.models.generateContent({
-            model: "gemini-2.5-pro",
+            model: "gemini-2.5-flash",
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
