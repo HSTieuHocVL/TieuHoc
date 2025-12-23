@@ -2,11 +2,26 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { QuizQuestion } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let ai: GoogleGenAI | null = null;
+
+export const initializeAi = (apiKey: string) => {
+    if (!apiKey) {
+        throw new Error("API Key is required to initialize the service.");
+    }
+    ai = new GoogleGenAI({ apiKey });
+};
+
+const getAiClient = (): GoogleGenAI => {
+    if (!ai) {
+        throw new Error("Gemini AI service has not been initialized. An API key must be provided.");
+    }
+    return ai;
+};
 
 export const askGemini = async (prompt: string): Promise<string> => {
   try {
-    const response = await ai.models.generateContent({
+    const client = getAiClient();
+    const response = await client.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: prompt,
     });
@@ -28,6 +43,7 @@ export const askGemini = async (prompt: string): Promise<string> => {
 
 export const generateQuiz = async (): Promise<QuizQuestion[]> => {
     try {
+        const client = getAiClient();
         const prompt = `Hãy tạo một bài kiểm tra trắc nghiệm gồm 10 câu hỏi toán học cho học sinh lớp 4 ở Việt Nam.
 Các câu hỏi nên bao gồm các chủ đề sau: đọc và viết số lớn, giá trị của chữ số theo hàng và lớp, so sánh và sắp xếp số, làm tròn số, dãy số có quy luật, và các phép tính cơ bản (cộng, trừ, nhân, chia) với số tự nhiên.
 QUAN TRỌNG: KHÔNG BAO GỒM các bài toán nhân một số có hai chữ số với một số có hai chữ số.
@@ -40,7 +56,7 @@ Mỗi câu hỏi phải có:
 
 Vui lòng trả lời dưới dạng một mảng JSON tuân thủ theo schema đã cung cấp.`;
 
-        const response = await ai.models.generateContent({
+        const response = await client.models.generateContent({
             model: "gemini-3-pro-preview",
             contents: prompt,
             config: {
